@@ -1,5 +1,6 @@
 export const FRAME_WIDTH = 1066;
 export const FRAME_HEIGHT = 600;
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export type FrameRect = { left: number; top: number; width: number; height: number };
 export type FrameHotspot = {
@@ -64,7 +65,7 @@ function realmHotspots(index: number): readonly FrameHotspot[] {
 export const FRAME_SCREENS: readonly FrameScreen[] = names.map((name, index) => ({
   index,
   nodeId: nodeIds[index],
-  image: `/frames/${String(index).padStart(2, "0")}-${name}.png`,
+  image: `${BASE_PATH}/frames/${String(index).padStart(2, "0")}-${name}.png`,
   alt: labels[index],
   hotspots: index === 0
     ? [{ id: "start", label: "问心，开始旅程", rect: { left: 17.5, top: 70, width: 21, height: 12 }, targetIndex: 1 }]
