@@ -1,0 +1,380 @@
+[gd_scene format=3 uid="uid://dfkl3tuw4j5ks"]
+
+[ext_resource type="Script" uid="uid://c7r3n76msx8jh" path="res://scripts/jump_game.gd" id="1_jump"]
+[ext_resource type="Texture2D" uid="uid://bg1oxt2ewdp6h" path="res://games/jump/assets/jump_background.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://games/jump/assets/player_idle.png" id="3_person"]
+[ext_resource type="Texture2D" uid="uid://xtu20vmmo7a7" path="res://Background/Desktop - 1.png" id="4_paper"]
+[ext_resource type="Texture2D" uid="uid://bhn2aqimwyxpl" path="res://ui/border1.png" id="5_header"]
+[ext_resource type="Texture2D" uid="uid://djoxhkpqushxn" path="res://ui/border2.svg" id="6_frame"]
+[ext_resource type="Texture2D" uid="uid://cshqru2qowyv7" path="res://ui/time.png" id="7_time"]
+[ext_resource type="FontFile" path="res://Fonts/汇文明朝体GBK1.001/汇文明朝体.otf" id="8_font"]
+[ext_resource type="Texture2D" uid="uid://brptdric0wlsh" path="res://games/jump/assets/lotus.png" id="9_lotus"]
+[ext_resource type="Texture2D" uid="uid://ctxlhbrigqusk" path="res://games/jump/assets/collision_map.jpg" id="10_collision"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_light"]
+bg_color = Color(0.98, 0.968, 0.929, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.18, 0.34, 0.45, 0.92)
+
+[sub_resource type="Shader" id="Shader_person_idle_black_cutout"]
+code = "shader_type canvas_item;\n\nvoid fragment() {\n    vec4 texel = texture(TEXTURE, UV);\n    if (max(max(texel.r, texel.g), texel.b) < 0.06) {\n        discard;\n    }\n    COLOR = texel;\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_person_idle_black_cutout"]
+shader = SubResource("Shader_person_idle_black_cutout")
+
+[node name="JumpGame" type="Node2D" unique_id=1912665268]
+script = ExtResource("1_jump")
+
+[node name="BackgroundLayer" type="Node2D" parent="." unique_id=298413647]
+
+[node name="PaperBackdrop" type="Sprite2D" parent="BackgroundLayer" unique_id=225524499]
+position = Vector2(4254.5, 540)
+scale = Vector2(4.431771, 1)
+texture = ExtResource("4_paper")
+
+[node name="PlayfieldFrame" type="Sprite2D" parent="BackgroundLayer" unique_id=29089036]
+z_index = 5
+position = Vector2(4268.25, 656.00006)
+scale = Vector2(4.505989, 0.98088)
+texture = ExtResource("6_frame")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1083164448]
+position = Vector2(4239, 649.00006)
+scale = Vector2(0.6873916, 0.95629066)
+texture = ExtResource("2_bg")
+
+[node name="CollisionOverlay" type="Sprite2D" parent="." unique_id=845721904]
+visible = false
+modulate = Color(1, 1, 1, 0.84)
+z_index = 4
+position = Vector2(4247, 661)
+scale = Vector2(0.6885989, 0.98280746)
+texture = ExtResource("10_collision")
+
+[node name="Player" type="Sprite2D" parent="." unique_id=677012504]
+z_index = 6
+position = Vector2(137.00002, 615)
+scale = Vector2(0.115, 0.115)
+offset = Vector2(0, 180)
+texture = ExtResource("3_person")
+material = SubResource("ShaderMaterial_person_idle_black_cutout")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1572156880]
+
+[node name="HeaderPanel" type="Sprite2D" parent="HUD" unique_id=617819877]
+visible = false
+z_index = -1
+position = Vector2(960, 120)
+texture = ExtResource("5_header")
+
+[node name="TopBar" type="ColorRect" parent="HUD" unique_id=535076640]
+visible = false
+offset_right = 1920.0
+offset_bottom = 188.0
+color = Color(0.98, 0.965, 0.92, 0)
+
+[node name="Eyebrow" type="Label" parent="HUD" unique_id=1067318452]
+visible = false
+offset_left = 78.0
+offset_top = 78.0
+offset_right = 220.0
+offset_bottom = 117.0
+theme_override_colors/font_color = Color(0.8, 0.25, 0.04, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 30
+text = "目标"
+
+[node name="Title" type="Label" parent="HUD" unique_id=1842719224]
+offset_left = 610.0
+offset_top = 80.0
+offset_right = 1310.0
+offset_bottom = 186.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 82
+text = "相忘｜莲花跳跃"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="HUD" unique_id=219778305]
+offset_left = 610.0
+offset_top = 966.0
+offset_right = 1310.0
+offset_bottom = 1022.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 0.9)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 30
+text = "轻触跳跃，双击跃得更高"
+horizontal_alignment = 1
+
+[node name="LeftControl" type="Button" parent="HUD"]
+visible = false
+offset_left = 82.0
+offset_top = 858.0
+offset_right = 250.0
+offset_bottom = 966.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+text = "←"
+
+[node name="RightControl" type="Button" parent="HUD"]
+visible = false
+offset_left = 268.0
+offset_top = 858.0
+offset_right = 436.0
+offset_bottom = 966.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+text = "→"
+
+[node name="JumpControl" type="Button" parent="HUD"]
+visible = false
+offset_left = 454.0
+offset_top = 858.0
+offset_right = 622.0
+offset_bottom = 966.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+text = "跳跃"
+
+[node name="LotusLabel" type="Label" parent="HUD" unique_id=885235722]
+offset_left = 78.0
+offset_top = 56.0
+offset_right = 500.0
+offset_bottom = 142.0
+theme_override_colors/font_color = Color(0.18039216, 0.34117648, 0.4509804, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 50
+text = "莲花 0 / 48"
+
+[node name="LotusIcon" type="TextureRect" parent="HUD" unique_id=1988803982]
+visible = false
+offset_left = 1287.0
+offset_top = 51.0
+offset_right = 1421.0
+offset_bottom = 198.0
+texture = ExtResource("9_lotus")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="LotusHeader" type="Label" parent="HUD" unique_id=966802371]
+visible = false
+offset_left = 1388.0
+offset_top = 56.0
+offset_right = 1493.0
+offset_bottom = 93.0
+theme_override_colors/font_color = Color(0.8, 0.25, 0.04, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 30
+text = "莲花"
+horizontal_alignment = 1
+
+[node name="LotusUnit" type="Label" parent="HUD" unique_id=685450672]
+visible = false
+offset_left = 1485.0
+offset_top = 138.0
+offset_right = 1530.0
+offset_bottom = 177.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 28
+text = "朵"
+
+[node name="ProgressLabel" type="Label" parent="HUD" unique_id=2099947681]
+offset_left = 1420.0
+offset_top = 56.0
+offset_right = 1842.0
+offset_bottom = 142.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 50
+text = "用时 00:00"
+horizontal_alignment = 2
+
+[node name="HourglassIcon" type="TextureRect" parent="HUD" unique_id=1753184868]
+visible = false
+offset_left = 1288.0
+offset_top = 52.0
+offset_right = 1394.0
+offset_bottom = 200.0
+texture = ExtResource("7_time")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="ProgressHeader" type="Label" parent="HUD" unique_id=667369400]
+visible = false
+offset_left = 1628.0
+offset_top = 44.0
+offset_right = 1758.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.8, 0.25, 0.04, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 30
+text = "进度"
+
+[node name="ProgressUnit" type="Label" parent="HUD" unique_id=51744220]
+visible = false
+offset_left = 1718.0
+offset_top = 138.0
+offset_right = 1758.0
+offset_bottom = 177.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 28
+text = "%"
+
+[node name="Status" type="Label" parent="HUD" unique_id=1356108815]
+visible = false
+offset_left = 539.0
+offset_top = 1018.0
+offset_right = 1399.0
+offset_bottom = 1056.0
+theme_override_colors/font_color = Color(0.98039216, 0.9529412, 0.91764706, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 31
+text = "向右行，去拾一朵莲"
+horizontal_alignment = 1
+
+[node name="Restart" type="Button" parent="HUD" unique_id=74911942]
+visible = false
+offset_left = 1680.0
+offset_top = 968.0
+offset_right = 1848.0
+offset_bottom = 1032.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+theme_override_styles/hover = SubResource("StyleBoxFlat_light")
+text = "重新开始"
+
+[node name="Overlays" type="CanvasLayer" parent="." unique_id=1398871644]
+
+[node name="ResultOverlay" type="Control" parent="Overlays" unique_id=1300861680]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dimmer" type="ColorRect" parent="Overlays/ResultOverlay" unique_id=209918078]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.05, 0.09, 0.13, 0.22)
+
+[node name="ResultPanel" type="Panel" parent="Overlays/ResultOverlay" unique_id=846076795]
+layout_mode = 0
+offset_left = 692.0
+offset_top = 126.0
+offset_right = 1230.0
+offset_bottom = 952.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_light")
+
+[node name="ResultChapterLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=34095717]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 54.0
+offset_right = 418.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 26
+text = "第三境｜逐莲"
+horizontal_alignment = 1
+
+[node name="ResultTitleLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1659266975]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 110.0
+offset_right = 482.0
+offset_bottom = 224.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 78
+text = "逐莲已毕"
+horizontal_alignment = 1
+
+[node name="DividerTop" type="ColorRect" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1262713586]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 236.0
+offset_right = 434.0
+offset_bottom = 238.0
+color = Color(0.18, 0.34, 0.45, 0.45)
+
+[node name="ResultScoreHeaderLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1876991418]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 278.0
+offset_right = 408.0
+offset_bottom = 322.0
+theme_override_colors/font_color = Color(0.8, 0.25, 0.04, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 34
+text = "收集莲花"
+horizontal_alignment = 1
+
+[node name="ResultScoreValueLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=995542879]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 370.0
+offset_right = 282.0
+offset_bottom = 532.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 108
+text = "0"
+horizontal_alignment = 2
+
+[node name="ResultScoreUnitLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1372642580]
+layout_mode = 0
+offset_left = 350.0
+offset_top = 419.0
+offset_right = 410.0
+offset_bottom = 456.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 34
+text = "朵"
+
+[node name="ResultSummaryLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=682924986]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 584.0
+offset_right = 438.0
+offset_bottom = 684.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 24
+text = "行至彼岸，莲花满袖
+此心所向，终有所归"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1393252882]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 713.0
+offset_right = 357.0
+offset_bottom = 785.0
+theme_override_colors/font_color = Color(0.18, 0.34, 0.45, 1)
+theme_override_fonts/font = ExtResource("8_font")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+theme_override_styles/hover = SubResource("StyleBoxFlat_light")
+text = "再走一次"

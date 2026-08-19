@@ -1,0 +1,30 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+.worktrees/
+
+# Local/editor noise
+.DS_Store
+*.import
+
+# Node/web dependencies and local tooling
+web/node_modules/
+web/.pnpm-store/
+web/.wrangler/
+web/.next/
+web/.vinext/
+web/.worktrees/
+web/.vercel/
+web/tsconfig.tsbuildinfo
+web/dist/
+web/outputs/
+web/work/
+
+# Root build/cache output
+dist/
+.pnpm-store/
+.audit/
+
+# Local application state and Python cache
+Library/
+**/__pycache__/

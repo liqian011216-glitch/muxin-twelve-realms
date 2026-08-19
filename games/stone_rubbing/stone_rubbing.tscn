@@ -1,0 +1,279 @@
+[gd_scene format=3 uid="uid://f7gnkpkrrpll"]
+
+[ext_resource type="Script" uid="uid://dseqo7cs4f40b" path="res://scripts/stone_rubbing.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://d01tg13qf6rle" path="res://games/stone_rubbing/assets/frame-initial.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cu0mjqskmx7k" path="res://games/stone_rubbing/assets/frame-clean.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dgl01rvj7o0jg" path="res://games/stone_rubbing/assets/frame-paper.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://c00kxp4i8un03" path="res://games/stone_rubbing/assets/frame-ink.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://7jd8xn6hl7pm" path="res://games/stone_rubbing/assets/rubbing-final.png" id="6"]
+[ext_resource type="FontFile" uid="uid://v3w1cs6d4x8u" path="res://Fonts/思印宋1.00/SiyinSong-Regular.ttf" id="7"]
+
+[sub_resource type="Shader" id="Shader_rubbing_reveal"]
+code = "shader_type canvas_item;\n\nuniform sampler2D reveal_mask : filter_linear;\nuniform float completion_mix : hint_range(0.0, 1.0) = 0.0;\n\nvoid fragment() {\n\tvec4 source = texture(TEXTURE, UV);\n\tfloat mask_value = texture(reveal_mask, UV).r;\n\tfloat reveal = max(mask_value, completion_mix);\n\tCOLOR = vec4(source.rgb, source.a * smoothstep(0.08, 0.42, reveal));\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rubbing_reveal"]
+shader = SubResource("Shader_rubbing_reveal")
+shader_parameter/completion_mix = 0.0
+
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.968627, 0.937255, 0.898039, 0.78)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.192157, 0.345098, 0.458824, 0.35)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="StoneRubbing" type="Control" unique_id=2130363111]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="GameShell" type="Control" parent="." unique_id=1909959147]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InitialFrame" type="TextureRect" parent="GameShell" unique_id=1797426972]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CleanFrame" type="TextureRect" parent="GameShell" unique_id=1598631728]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PaperFrame" type="TextureRect" parent="GameShell" unique_id=1371840889]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="InkFrame" type="TextureRect" parent="GameShell" unique_id=255578016]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PaperTarget" type="Control" parent="GameShell" unique_id=1576668021]
+anchors_preset = 0
+offset_left = 447.0
+offset_top = 218.0
+offset_right = 1415.0
+offset_bottom = 890.0
+mouse_filter = 2
+
+[node name="FinalArtwork" type="TextureRect" parent="GameShell/PaperTarget" unique_id=1312539210]
+visible = false
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_rubbing_reveal")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DustOverlay" type="Control" parent="GameShell/PaperTarget"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InkReveal" type="Control" parent="GameShell/PaperTarget"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 968.0
+offset_bottom = 672.0
+clip_contents = true
+mouse_filter = 2
+
+[node name="ToolHotspots" type="Control" parent="GameShell" unique_id=1943250793]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="BrushButton" type="Button" parent="GameShell/ToolHotspots" unique_id=532888693]
+layout_mode = 0
+offset_left = 1571.0
+offset_top = 194.0
+offset_right = 1821.0
+offset_bottom = 464.0
+flat = true
+
+[node name="PaperButton" type="Button" parent="GameShell/ToolHotspots" unique_id=1528190224]
+layout_mode = 0
+offset_left = 1540.0
+offset_top = 486.0
+offset_right = 1828.0
+offset_bottom = 680.0
+flat = true
+
+[node name="InkButton" type="Button" parent="GameShell/ToolHotspots" unique_id=579411860]
+layout_mode = 0
+offset_left = 1555.0
+offset_top = 724.0
+offset_right = 1824.0
+offset_bottom = 962.0
+flat = true
+
+[node name="FloatingTool" type="TextureRect" parent="GameShell" unique_id=2067015995]
+visible = false
+layout_mode = 0
+offset_right = 180.0
+offset_bottom = 180.0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="StepProgress" type="Control" parent="GameShell" unique_id=1761529141]
+anchors_preset = 0
+offset_left = 53.0
+offset_top = 496.0
+offset_right = 300.0
+offset_bottom = 650.0
+mouse_filter = 2
+
+[node name="EyebrowLabel" type="Label" parent="GameShell/StepProgress" unique_id=1520545661]
+layout_mode = 0
+offset_right = 238.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.160784, 0.298039, 0.407843, 0.64)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 18
+text = "当前步骤  壹"
+
+[node name="StepLabel" type="Label" parent="GameShell/StepProgress" unique_id=2083931256]
+layout_mode = 0
+offset_top = 34.0
+offset_right = 238.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0.160784, 0.298039, 0.407843, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 26
+text = "清扫石面"
+
+[node name="ProgressTrack" type="ColorRect" parent="GameShell/StepProgress" unique_id=138231266]
+layout_mode = 0
+offset_top = 91.0
+offset_right = 172.0
+offset_bottom = 94.0
+mouse_filter = 2
+color = Color(0.192157, 0.345098, 0.458824, 0.16)
+
+[node name="ProgressFill" type="ColorRect" parent="GameShell/StepProgress/ProgressTrack" unique_id=2142643588]
+layout_mode = 0
+offset_right = 172.0
+offset_bottom = 3.0
+scale = Vector2(1e-05, 1)
+mouse_filter = 2
+color = Color(0.192157, 0.345098, 0.458824, 1)
+
+[node name="OutputLabel" type="Label" parent="GameShell/StepProgress" unique_id=610561160]
+layout_mode = 0
+offset_left = 182.0
+offset_top = 76.0
+offset_right = 246.0
+offset_bottom = 108.0
+theme_override_colors/font_color = Color(0.160784, 0.298039, 0.407843, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 18
+text = "0%"
+horizontal_alignment = 2
+
+[node name="InstructionBlock" type="ColorRect" parent="GameShell"]
+layout_mode = 0
+offset_left = 446.0
+offset_top = 952.0
+offset_right = 1450.0
+offset_bottom = 1074.0
+color = Color(0.968627, 0.952941, 0.909804, 0.96)
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="GameShell/InstructionBlock"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 8.0
+offset_right = 984.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.207843, 0.364706, 0.47451, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 28
+text = "壹  清尘"
+horizontal_alignment = 1
+
+[node name="BodyLabel" type="Label" parent="GameShell/InstructionBlock"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 52.0
+offset_right = 984.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.207843, 0.364706, 0.47451, 1)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 25
+text = "拖动棕刷轻扫石刻表面，拂去浮尘，还原刻痕"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameShell" unique_id=1419042669]
+layout_mode = 0
+offset_left = 1760.0
+offset_top = 1024.0
+offset_right = 1848.0
+offset_bottom = 1060.0
+theme_override_colors/font_color = Color(0.192157, 0.345098, 0.458824, 0.92)
+theme_override_fonts/font = ExtResource("7")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("1")
+theme_override_styles/pressed = SubResource("1")
+theme_override_styles/hover = SubResource("1")
+theme_override_styles/focus = SubResource("1")
+text = "重置"

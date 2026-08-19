@@ -1,0 +1,431 @@
+[gd_scene format=3 uid="uid://11swa6b5k7e5"]
+
+[ext_resource type="Script" uid="uid://6ph2hc53vxtv" path="res://scripts/seek_cow.gd" id="1_5mpxg"]
+[ext_resource type="Texture2D" uid="uid://xtu20vmmo7a7" path="res://Background/Desktop - 1.png" id="2_uio2e"]
+[ext_resource type="Texture2D" path="res://Background/background-v2.png" id="3_37mt5"]
+[ext_resource type="Texture2D" uid="uid://bhn2aqimwyxpl" path="res://ui/border1.png" id="4_14bvf"]
+[ext_resource type="Texture2D" uid="uid://djoxhkpqushxn" path="res://ui/border2.svg" id="5_vw7v7"]
+[ext_resource type="Texture2D" uid="uid://cshqru2qowyv7" path="res://ui/time.png" id="6_ha0c2"]
+[ext_resource type="FontFile" uid="uid://v3w1cs6d4x8u" path="res://Fonts/思印宋1.00/SiyinSong-Regular.ttf" id="7_esosw"]
+[ext_resource type="Texture2D" path="res://games/jump/assets/player_walk_v2.png" id="8_q7g0f"]
+[ext_resource type="Texture2D" path="res://cow/cow_run_sheet_v2.png" id="9_rx5wx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_light"]
+bg_color = Color(0.980392, 0.968627, 0.929412, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.180392, 0.341176, 0.45098, 0.92)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+shadow_color = Color(0, 0, 0, 0)
+
+[sub_resource type="Shader" id="Shader_person_black_cutout"]
+code = "shader_type canvas_item;
+
+void fragment() {
+    vec4 texel = texture(TEXTURE, UV);
+    if (max(max(texel.r, texel.g), texel.b) < 0.06) {
+        discard;
+    }
+    COLOR = texel;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_person_black_cutout"]
+shader = SubResource("Shader_person_black_cutout")
+
+[sub_resource type="Shader" id="Shader_cow_checker_cutout"]
+code = "shader_type canvas_item;
+
+void fragment() {
+    vec4 texel = texture(TEXTURE, UV);
+    float lightness = min(min(texel.r, texel.g), texel.b);
+    float neutrality = max(max(texel.r, texel.g), texel.b) - lightness;
+    if (lightness > 0.12 && neutrality < 0.10) {
+        discard;
+    }
+    COLOR = texel;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cow_checker_cutout"]
+shader = SubResource("Shader_cow_checker_cutout")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j6h7w"]
+size = Vector2(180, 130)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dark"]
+bg_color = Color(0.180392, 0.341176, 0.45098, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.180392, 0.341176, 0.45098, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+shadow_color = Color(0, 0, 0, 0)
+
+[node name="Main" type="Node2D" unique_id=1549362415]
+script = ExtResource("1_5mpxg")
+
+[node name="BackgroundLayer" type="Node2D" parent="." unique_id=53427884]
+
+[node name="PaperBackdrop" type="Sprite2D" parent="BackgroundLayer" unique_id=12720642]
+position = Vector2(960, 540)
+texture = ExtResource("2_uio2e")
+
+[node name="PlayfieldBackground" type="Sprite2D" parent="BackgroundLayer" unique_id=1500266857]
+position = Vector2(954, 648)
+texture = ExtResource("3_37mt5")
+
+[node name="PlayfieldFrame" type="Sprite2D" parent="BackgroundLayer" unique_id=685210862]
+position = Vector2(963, 658)
+scale = Vector2(0.9875, 0.9808807)
+texture = ExtResource("5_vw7v7")
+
+[node name="HeaderPanel" type="Sprite2D" parent="BackgroundLayer" unique_id=757933243]
+position = Vector2(960, 120)
+texture = ExtResource("4_14bvf")
+
+[node name="HUD" type="Control" parent="." unique_id=1592786805]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GoalHeaderLabel" type="Label" parent="HUD" unique_id=1767256285]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 78.0
+offset_right = 154.0
+offset_bottom = 117.0
+theme_override_colors/font_color = Color(0.796078, 0.254902, 0.0352941, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+text = "目标"
+
+[node name="GoalBodyLabel" type="Label" parent="HUD" unique_id=102207599]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 124.0
+offset_right = 572.0
+offset_bottom = 220.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 26
+text = "点击草地改变牧人的方向，
+在限定时间内抓住更多逃跑的牛。"
+autowrap_mode = 3
+
+[node name="TitleLabel" type="Label" parent="HUD" unique_id=1382494195]
+layout_mode = 0
+offset_left = 700.0
+offset_top = 77.0
+offset_right = 1240.0
+offset_bottom = 169.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 82
+text = "初调｜寻牛"
+horizontal_alignment = 1
+
+[node name="ScorePanel" type="Control" parent="HUD" unique_id=1261121614]
+anchors_preset = 0
+offset_left = 1152.0
+offset_top = 60.0
+offset_right = 1292.0
+offset_bottom = 178.0
+
+[node name="ScoreHeaderLabel" type="Label" parent="HUD/ScorePanel" unique_id=1732598929]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 8.0
+offset_right = 517.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.796078, 0.254902, 0.0352941, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+text = "得分"
+
+[node name="ScoreValueLabel" type="Label" parent="HUD/ScorePanel" unique_id=1982787107]
+layout_mode = 0
+offset_left = 421.0
+offset_top = 65.0
+offset_right = 517.0
+offset_bottom = 145.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 74
+text = "0"
+horizontal_alignment = 1
+
+[node name="ScoreUnitLabel" type="Label" parent="HUD/ScorePanel" unique_id=2079826363]
+layout_mode = 0
+offset_left = 534.0
+offset_top = 99.0
+offset_right = 570.0
+offset_bottom = 133.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 28
+text = "分"
+
+[node name="HourglassIcon" type="TextureRect" parent="HUD" unique_id=1822098037]
+layout_mode = 0
+offset_left = 1288.0
+offset_top = 52.0
+offset_right = 1394.0
+offset_bottom = 209.0
+texture = ExtResource("6_ha0c2")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="TimerHeaderLabel" type="Label" parent="HUD" unique_id=934105203]
+layout_mode = 0
+offset_left = 1397.0
+offset_top = 69.0
+offset_right = 1467.0
+offset_bottom = 105.0
+theme_override_colors/font_color = Color(0.796078, 0.254902, 0.0352941, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+text = "时间"
+
+[node name="TimerValueLabel" type="Label" parent="HUD" unique_id=611373129]
+layout_mode = 0
+offset_left = 1388.0
+offset_top = 121.0
+offset_right = 1476.0
+offset_bottom = 201.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 72
+text = "60"
+horizontal_alignment = 1
+
+[node name="TimerUnitLabel" type="Label" parent="HUD" unique_id=70224219]
+layout_mode = 0
+offset_left = 1504.0
+offset_top = 158.0
+offset_right = 1532.0
+offset_bottom = 192.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+text = "s"
+
+[node name="StatusLabel" type="Label" parent="HUD" unique_id=1347864688]
+layout_mode = 0
+offset_left = 587.0
+offset_top = 1009.0
+offset_right = 1287.0
+offset_bottom = 1047.0
+theme_override_colors/font_color = Color(0.796078, 0.254902, 0.0352941, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 31
+text = "点击草地开始追牛"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="HUD" unique_id=1039287767]
+visible = false
+layout_mode = 0
+offset_left = 80.0
+offset_top = 968.0
+offset_right = 236.0
+offset_bottom = 1038.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+theme_override_styles/hover = SubResource("StyleBoxFlat_light")
+theme_override_styles/focus = SubResource("StyleBoxFlat_light")
+text = "返回选境"
+
+[node name="Actors" type="Node2D" parent="." unique_id=1895154496]
+
+[node name="Seeker" type="Sprite2D" parent="Actors" unique_id=419025599]
+material = SubResource("ShaderMaterial_person_black_cutout")
+position = Vector2(503, 635)
+scale = Vector2(0.12, 0.12)
+texture = ExtResource("8_q7g0f")
+hframes = 4
+
+[node name="Cow" type="Area2D" parent="Actors" unique_id=2109825927]
+position = Vector2(1135, 651)
+
+[node name="CowSprite" type="Sprite2D" parent="Actors/Cow" unique_id=247875470]
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("9_rx5wx")
+hframes = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Actors/Cow" unique_id=1128808360]
+shape = SubResource("RectangleShape2D_j6h7w")
+
+[node name="GameTimer" type="Timer" parent="." unique_id=1788310740]
+
+[node name="Overlays" type="CanvasLayer" parent="." unique_id=1398871644]
+
+[node name="ResultOverlay" type="Control" parent="Overlays" unique_id=1300861680]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Dimmer" type="ColorRect" parent="Overlays/ResultOverlay" unique_id=1642448417]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.054902, 0.0941176, 0.12549, 0.22)
+
+[node name="ResultPanel" type="Panel" parent="Overlays/ResultOverlay" unique_id=267756900]
+layout_mode = 0
+offset_left = 692.0
+offset_top = 126.0
+offset_right = 1230.0
+offset_bottom = 952.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_light")
+
+[node name="ResultChapterLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1534307765]
+layout_mode = 0
+offset_left = 151.0
+offset_top = 54.0
+offset_right = 381.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 26
+text = "第一境｜初调"
+horizontal_alignment = 1
+
+[node name="ResultTitleLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1010616166]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 110.0
+offset_right = 474.0
+offset_bottom = 224.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 78
+text = "寻牛已毕"
+horizontal_alignment = 1
+
+[node name="ResultDividerTop" type="ColorRect" parent="Overlays/ResultOverlay/ResultPanel" unique_id=935547592]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 236.0
+offset_right = 434.0
+offset_bottom = 238.0
+color = Color(0.180392, 0.341176, 0.45098, 0.45)
+
+[node name="ResultScoreHeaderLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1576705927]
+layout_mode = 0
+offset_left = 161.0
+offset_top = 278.0
+offset_right = 375.0
+offset_bottom = 322.0
+theme_override_colors/font_color = Color(0.796078, 0.254902, 0.0352941, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 34
+text = "本局得分"
+horizontal_alignment = 1
+
+[node name="ResultScoreValueLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=946800939]
+layout_mode = 0
+offset_left = 97.0
+offset_top = 360.0
+offset_right = 275.0
+offset_bottom = 522.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 108
+text = "0"
+horizontal_alignment = 2
+
+[node name="ResultScoreUnitLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=231561477]
+layout_mode = 0
+offset_left = 306.0
+offset_top = 419.0
+offset_right = 356.0
+offset_bottom = 456.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 34
+text = "分"
+
+[node name="ResultDividerMiddle" type="ColorRect" parent="Overlays/ResultOverlay/ResultPanel" unique_id=688909083]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 542.0
+offset_right = 452.0
+offset_bottom = 544.0
+color = Color(0.180392, 0.341176, 0.45098, 0.36)
+
+[node name="ResultDiamond" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=324944611]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 534.0
+offset_right = 283.0
+offset_bottom = 560.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 16
+text = "◆"
+horizontal_alignment = 1
+
+[node name="ResultSummaryLabel" type="Label" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1200921442]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 584.0
+offset_right = 418.0
+offset_bottom = 684.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 24
+text = "牛奔于野，心亦随之
+初见此心，方知其难驯"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="Overlays/ResultOverlay/ResultPanel" unique_id=812411954]
+visible = false
+layout_mode = 0
+offset_left = 48.0
+offset_top = 713.0
+offset_right = 224.0
+offset_bottom = 785.0
+theme_override_colors/font_color = Color(0.180392, 0.341176, 0.45098, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_light")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_light")
+theme_override_styles/hover = SubResource("StyleBoxFlat_light")
+theme_override_styles/focus = SubResource("StyleBoxFlat_light")
+text = "再寻一次"
+
+[node name="ContinueButton" type="Button" parent="Overlays/ResultOverlay/ResultPanel" unique_id=1990310676]
+layout_mode = 0
+offset_left = 181.0
+offset_top = 713.0
+offset_right = 357.0
+offset_bottom = 785.0
+theme_override_colors/font_color = Color(0.980392, 0.968627, 0.929412, 1)
+theme_override_fonts/font = ExtResource("7_esosw")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_dark")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dark")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dark")
+theme_override_styles/focus = SubResource("StyleBoxFlat_dark")
+text = "继续牧心"
